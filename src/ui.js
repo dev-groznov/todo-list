@@ -1,3 +1,9 @@
+const PRIORITY_ORDER = {
+    'var(--priority-high)': 1,
+    'var(--priority-medium)': 2,
+    'var(--priority-low)': 3
+};
+
 function formatDueDate(dueDateStr) {
     if (!dueDateStr) return '';
 
@@ -10,17 +16,17 @@ function formatDueDate(dueDateStr) {
     const diffTime = dueDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return 'Просрочено';
-    if (diffDays === 0) return 'Сегодня';
-    if (diffDays === 1) return 'Завтра';
-    if (diffDays > 1 && diffDays <= 7) return `Через ${diffDays} дн.`;
+    if (diffDays < 0) return 'Overdue';
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays > 1 && diffDays <= 7) return `In ${diffDays} days`;
 
     const months = [
-        'янв.', 'февр.', 'марта', 'апр.', 'мая', 'июня',
-        'июля', 'авг.', 'сент.', 'окт.', 'нояб.', 'декаб.'
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
-    return `${day} ${months[month - 1]} ${year}`;
+    return `${months[month - 1]} ${day}, ${year}`;
 }
 
 export const UI = {
@@ -177,12 +183,12 @@ export const UI = {
                         <h2 class="project-title">${project.name}</h2>
                         <div class="project-actions">
                             <button class="btn-add-task" data-project-id="${project.id}">+ Add Task</button>
-                            <svg class="icon-delete-project" data-project-id="${project.id}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
                             <svg class="icon-edit-project" data-project-id="${project.id}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer; width: 20px; height: 20px;">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            <svg class="icon-delete-project" data-project-id="${project.id}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
                         </div>
                     </div>

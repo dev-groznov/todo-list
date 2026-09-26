@@ -2,12 +2,31 @@ import "./styles.css";
 import { UI } from './ui.js';
 import { Project, Task } from './logic.js';
 
-const projects = [];
+let projects = [];
 const openedProjectIds = [];
 
 let targetProjectId = null;
 let editingTaskId = null;
 let editingProjectId = null;
+
+function saveToLocalStorage() {
+    localStorage.setItem('pinknotes_projects', JSON.stringify(projects));
+    localStorage.setItem('pinknotes_opened', JSON.stringify(openedProjectIds));
+}
+
+function loadFromLocalStorage() {
+    const savedProjects = localStorage.getItem('pinknotes_projects');
+
+    if (savedProjects) {
+        try {
+            const parsed = JSON.parse(savedProjects);
+            projects = parsed.map(pData => Project.fromData(pData));
+        } catch (e) {
+            console.error('Ошибка загрузки проектов из localStorage:', e);
+            projects = [];
+        }
+    }
+}
 
 document.getElementById('openProjectModal').addEventListener('click', UI.openModal);
 document.getElementById('closeProjectModal').addEventListener('click', () => {
@@ -33,6 +52,7 @@ function toggleProject(id) {
 }
 
 function updateUI() {
+    saveToLocalStorage();
     const openedProjects = openedProjectIds
         .map(id => projects.find(p => p.id === id))
         .filter(Boolean);
@@ -147,3 +167,6 @@ document.getElementById('createTaskBtn').addEventListener('click', () => {
         updateUI();
     }
 });
+
+loadFromLocalStorage();
+updateUI();

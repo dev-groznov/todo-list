@@ -1,6 +1,6 @@
 export class Task {
-    constructor(title, dueDate, priorityColor) {
-        this.id = Date.now().toString();
+    constructor(title, dueDate, priorityColor, id = null) {
+        this.id = id || Date.now().toString();
         this.title = title;
         this.dueDate = dueDate;
         this.priorityColor = priorityColor;
@@ -14,6 +14,16 @@ export class Project {
         this.color = color;
         this.tasks = []; 
     }
+
+    static fromData(data) {
+        const project = new Project(data.name, data.color, data.id);
+        if (Array.isArray(data.tasks)) {
+            project.tasks = data.tasks.map(
+                t => new Task(t.title, t.dueDate, t.priorityColor, t.id)
+            );
+    }
+    return project;
+}
 
     addTask(task) {
         this.tasks.push(task);
