@@ -311,3 +311,52 @@ main {
 .icon-edit:hover {
     opacity: 1;
 }
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2d8dc;
+    margin-bottom: 16px;
+}
+
+.project-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-delete-project {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-delete-project path {
+    pointer-events: none;
+}
+
+.icon-delete-project:hover {
+    color: var(--priority-high);
+    transform: scale(1.1);
+}
+
+.icon-edit-project {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-edit-project path {
+    pointer-events: none;
+}
+
+.icon-edit-project:hover {
+    color: var(--primary);
+    transform: scale(1.1);
+}

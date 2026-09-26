@@ -1,11 +1,36 @@
-const PRIORITY_ORDER = {
-    'var(--priority-high)': 1,
-    'var(--priority-medium)': 2,
-    'var(--priority-low)': 3
-};
+function formatDueDate(dueDateStr) {
+    if (!dueDateStr) return '';
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [year, month, day] = dueDateStr.split('-').map(Number);
+    const dueDate = new Date(year, month - 1, day);
+
+    const diffTime = dueDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'Просрочено';
+    if (diffDays === 0) return 'Сегодня';
+    if (diffDays === 1) return 'Завтра';
+    if (diffDays > 1 && diffDays <= 7) return `Через ${diffDays} дн.`;
+
+    const months = [
+        'янв.', 'февр.', 'марта', 'апр.', 'мая', 'июня',
+        'июля', 'авг.', 'сент.', 'окт.', 'нояб.', 'декаб.'
+    ];
+
+    return `${day} ${months[month - 1]} ${year}`;
+}
 
 export const UI = {
-    openModal() {
+    openModal(isEdit = false) {
+        const modalTitle = document.querySelector('#projectModal .modal-title');
+        const submitBtn = document.querySelector('#projectModal .btn-primary');
+
+        modalTitle.textContent = isEdit ? 'Edit Project' : 'Create Project';
+        submitBtn.textContent = isEdit ? 'Save Changes' : 'Create';
+
         document.getElementById('projectModal').classList.add('open');
     },
     
@@ -38,7 +63,16 @@ export const UI = {
     openTaskModal(isEdit = false) {
         const modalTitle = document.querySelector('#taskModal .modal-title');
         const submitBtn = document.getElementById('createTaskBtn');
+        const dateInput = document.querySelector('.task-modal-date');
         
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        
+        dateInput.min = `${year}-${month}-${day}`;
+        dateInput.max = '2030-12-31';
+
         modalTitle.textContent = isEdit ? 'Edit Task' : 'Create Task';
         submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Task';
 
@@ -49,6 +83,18 @@ export const UI = {
         document.getElementById('taskModal').classList.remove('open');
         document.querySelector('.task-modal-input').value = '';
         document.querySelector('.task-modal-date').value = '';
+    },
+
+    fillProjectModal(project) {
+        const nameInput = document.querySelector('#projectModal .modal-input');
+        if (nameInput) {
+            nameInput.value = project.name;
+        }
+
+        const colorOptions = document.querySelectorAll('#projectModal .color-option');
+        colorOptions.forEach(opt => {
+            opt.classList.toggle('selected', opt.style.background === project.color);
+        });
     },
 
     fillTaskModal(task) {
@@ -129,7 +175,16 @@ export const UI = {
                 <div class="project-card" style="--card-border-color: ${project.color};">
                     <div class="project-header">
                         <h2 class="project-title">${project.name}</h2>
-                        <button class="btn-add-task" data-project-id="${project.id}">+ Add Task</button>
+                        <div class="project-actions">
+                            <button class="btn-add-task" data-project-id="${project.id}">+ Add Task</button>
+                            <svg class="icon-delete-project" data-project-id="${project.id}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            <svg class="icon-edit-project" data-project-id="${project.id}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer; width: 20px; height: 20px;">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </div>
                     </div>
                     <div class="task-list">
                         ${tasksArray.length === 0 ? '<p style="color: var(--text-muted);">No tasks yet</p>' : ''}
@@ -140,7 +195,7 @@ export const UI = {
                                     <span>${task.title}</span>
                                 </div>
                                 <div class="task-right">
-                                    ${task.dueDate ? `<span>${task.dueDate}</span>` : ''}
+                                    ${task.dueDate ? `<span>${formatDueDate(task.dueDate)}</span>` : ''}
                                     <svg class="icon-edit" data-task-id="${task.id}" data-project-id="${project.id}" viewBox="0 0 24 24" fill="none" stroke="#ff6b8b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>

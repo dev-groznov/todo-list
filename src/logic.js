@@ -23,6 +23,11 @@ export class Project {
         this.tasks = this.tasks.filter(task => task.id !== taskId);
     }
 
+    update(name, color) {
+        this.name = name;
+        this.color = color;
+    }
+
     updateTask(taskId, updatedData) {
         const task = this.tasks.find(t => t.id === taskId);
         if (task) {
